@@ -1,21 +1,15 @@
 from telegram.ext import (
     Application,
     CommandHandler,
-    ContextTypes,
-    ConversationHandler,
-    MessageHandler,
-    filters,
 )
-import canvas
+import canvas_handler
 from telegram import ForceReply, Update
-import jsonpickle
-import json
-from rapidfuzz.distance import Indel
-# from canvasapi import Canvas
-API_KEY = '5460223513:AAFLCOuUnTAcX175NtPphOxss0Ghi7acYqo'
-# bot = telebot.TeleBot(API_KEY)
-CANVAS_URL = 'https://aheadonline.amrita.edu'
-CANVAS_TOKEN = 'yxDlbHuvnLUvX28wlbhtK9pu018QCz6pE2o0rrpXfWZG8tI2iyUfzp1B4SztRGr7'
+# from tele.pattern_matching import matching
+from tele.constants import(
+    CANVAS_URL,
+    CANVAS_TOKEN,
+    API_KEY
+)
 # retriver = canvas.Canvas(CANVAS_URL, CANVAS_TOKEN )
 
 # canvas_proxy = Canvas(CANVAS_URL, CANVAS_TOKEN)
@@ -24,7 +18,7 @@ CANVAS_TOKEN = 'yxDlbHuvnLUvX28wlbhtK9pu018QCz6pE2o0rrpXfWZG8tI2iyUfzp1B4SztRGr7
 #     json_str = jsonpickle.encode(message)
 #     return json.loads(json_str)
 
-canvas_client = canvas.CanvasTele(CANVAS_URL,CANVAS_TOKEN)
+canvas_client = canvas_handler.CanvasTele(CANVAS_URL,CANVAS_TOKEN)
 
 async def start(update,context) -> None:
     """Send a message when the command /start is issued."""
@@ -32,27 +26,27 @@ async def start(update,context) -> None:
     await update.message.reply_html(
         rf"Hi {user.mention_html()}!",
         reply_markup = ForceReply(selective=True),
-    ) 
-
-def whatis(update,context):
-    msg = update.message
-    # print(update.message)
-    querie = msg['text']
-    querie = querie[5:]
-    print(querie)
-    print(Indel.normalized_similarity(querie.strip(), 'next semesters?'))
+    )
+    
+async def help(update,context) -> None:
+    """List the commands available to the user"""
+    text_to_send = """I will send you remainders for your assignments of every subject before the due date\n\t
+    To get the list of courses use command /courses \n
+    To ask any gernal querie use command /ask <your querie>,\n 
+    i will try to answer :)\n"""
+    await update.message.reply_text(text_to_send)
 
 def main():
     application = Application.builder().token(API_KEY).build()
     application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("what", whatis))
+    application.add_handler(CommandHandler("help", help))
     application.add_handler(CommandHandler("courses", canvas_client.get_courses_list))
-    application.add_handler(CommandHandler("ass", canvas_client.get_all_assingmets))
+    application.add_handler(CommandHandler("due", canvas_client.get_assingment))
 
-
+    # job = application.job_queue
+    # job.run_repeating
     # on non command i.e message - echo the message on Telegram
     # application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
-
     # Run the bot until the user presses Ctrl-C
     application.run_polling()
 
