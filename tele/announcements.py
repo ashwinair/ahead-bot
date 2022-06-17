@@ -1,6 +1,7 @@
 from datetime import datetime
 from canvasapi import Canvas
 from html2text import html2text
+from telegram.constants import ParseMode
 import pytz
 from tele.constants import (
     CANVAS_DATE_FORMAT,
@@ -14,17 +15,17 @@ class Announcement:
         self.canvas = Canvas(API_URL, CANVAS_TOKEN)
         
 
-    def format_announcement(self,announcement):
+    def format_announcement(self,announcement,course):
         post_datetime = pytz.utc.localize(
             datetime.strptime(
                 announcement.posted_at, CANVAS_DATE_FORMAT)
             ).astimezone(IST).strftime(OUTPUT_DATE_FORMAT)
         announcemnt_list = [] 
-        announcemnt_list.append(f'Assignments dues for {announcement.context_code}: \n')
+        announcemnt_list.append(f'*Recent announcement form {course.name}:* \n')
         title = announcement.title
         description = html2text(announcement.message)
         # print(announcement.message)
-        announcemnt_list.append('Title:  {}\n\ttime:  {}\n\tdescription:  {}\n\t'
+        announcemnt_list.append('\t<b>Title:<b>  {}\n\tTime:  {}\n\tDescription:  {}\n\t'
                                     .format(title, post_datetime,description))
         return announcemnt_list
 
@@ -33,9 +34,9 @@ class Announcement:
         course = self.canvas.get_course(course_id)
         # ame= announcement.author['display_name'], url= announcement.url, icon_url= announcement.author['avatar_image_url'])
         # embed.set_footer(text=f'{post_datetime}\n{course.name}')
-        formated_announcement = self.format_announcement(announcement)
+        formated_announcement = self.format_announcement(announcement,course)
         text_to_send = '\n'.join(formated_announcement)
-        await update.message.reply_text(text_to_send)
+        await update.bot.send_message(chat_id=604663713, text= text_to_send)
 
 
 # async def add_announcement(self, ctx, course_id):
