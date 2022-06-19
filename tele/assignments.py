@@ -40,6 +40,7 @@ class Assignments :
 
         if len(due_today) == 0:
             print(f"no assignments reminder for {course.name} today.")
+            await update.message.reply_text(f"no assignments reminder for {course.name} today.")
             return  # If there aren't any assignments due today, don't send a reminder
         formatted_assignments = self.get_assignment_formatted(course.name,assignments_list ,due_date_list)
         text_to_send = '\n'.join(formatted_assignments)
