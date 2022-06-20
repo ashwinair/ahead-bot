@@ -20,7 +20,7 @@ class CanvasTele:
         self.canvas = Canvas(API_URL, CANVAS_TOKEN)
         self.assignment = Assignments(API_URL, CANVAS_TOKEN)
         self.last_check_time = datetime.now()
-        self.courses_list()
+        print(self.courses_list())
 
     # fill the course_ids[] with currently enrolled active courses in canvas LMS
     def courses_list(self):

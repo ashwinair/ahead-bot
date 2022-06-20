@@ -11,9 +11,10 @@ from tele.constants import(
     CANVAS_TOKEN,
     API_KEY
 )
+from tele.subscribe_manager import SubscribeManager
 
 canvas_client = canvas_handler.CanvasTele(CANVAS_URL, CANVAS_TOKEN)
-
+sub = SubscribeManager(CANVAS_URL, CANVAS_TOKEN)
 
 async def start(update, context) -> None:
     """Send a message when the command /start is issued."""
@@ -26,10 +27,15 @@ async def start(update, context) -> None:
 
 async def help(update, context) -> None:
     text_to_send = """
-    List the commands available:\n
-    ~ To get the list of courses use command /courses \n
-    ~ Use command /due to get list of assignments for all subjects.\n
-    # if you want list of due assignments for any particular subject then use: /due <subject id>,\n 
+    List of commands available:\t
+    
+⇝ /courses - To get the list of courses use command 
+    
+⇝ /due - To get list of assignments for all subjects. 
+    
+⇝ /sub - To subscribe to a particular course announcements. 
+    
+⇝ /unsub - To unsubscribe to a particular  course announcements.
     """
     await update.message.reply_text(text_to_send)
 
@@ -45,6 +51,8 @@ def main():
     application.add_handler(CommandHandler("courses", canvas_client.get_courses_list))
     application.add_handler(CommandHandler("due", canvas_client.get_assingment))
     application.add_handler(CommandHandler("ask", Pattern_Matching.matching))
+    application.add_handler(CommandHandler("sub", sub.subscribe_announcement))
+    application.add_handler(CommandHandler("unsub", sub.unsubscribe))
     application.run_polling()
 
 
