@@ -43,7 +43,6 @@ class SubscribeManager:
                 if is_valid_course:
                     for index, row in self.announcements_df.iterrows():
                         if (row['Chat_ID'] == chat_id) and (row['Course_id'] == course_id):
-                            print(row['Chat_ID'],row['Course_id'])
                             is_already_subscribed = True
                         
                     if is_already_subscribed :
@@ -80,7 +79,6 @@ class SubscribeManager:
                 if is_valid_course:
                     for index, row in self.announcements_df.iterrows():
                         if (row['Chat_ID'] == chat_id) and (row['Course_id'] == course_id):
-                            print(row['Chat_ID'],row['Course_id'])
                             is_already_subscribed = True
                             value_index = index
                     if is_already_subscribed :
