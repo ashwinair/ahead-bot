@@ -1,8 +1,6 @@
-
-
 from canvasapi import Canvas
 import pandas as pd
-from zmq import UNSUBSCRIBE
+
 
 
 class SubscribeManager:
@@ -10,16 +8,9 @@ class SubscribeManager:
     def __init__(self,Canvas_URL, CANVAS_TOKEN):
         self.announcements_df= pd.read_csv('csv/subscribers.csv',dtype='int64',error_bad_lines=False)
         self.canvas = Canvas(Canvas_URL, CANVAS_TOKEN) 
-        self.prin()
         
-        
-    def prin(self):
-        self.announcements_df = self.announcements_df.append(pd.DataFrame(
-            [[604663713, 105]], columns= self.announcements_df.columns), ignore_index=True)
-        print(self.announcements_df)
-        self.announcements_df.to_csv('csv/subscribers.csv', index = False)
-    
     def sub_message_format(self,title,description,course_id):
+        '''Format the Subscribe and Unsubscribe announcement message'''
         course = self.canvas.get_course(course_id)
         message = []
         message.append(f'Sucessfully {title} to the {course.name} announcements. :)\n\t')
@@ -27,13 +18,14 @@ class SubscribeManager:
         return message
             
     async def subscribe_announcement(self,update, context):
+        '''Subscribe the user for the specified course id and update subscribers.csv'''
         msg = update.message['text']
         chat_id = update.message['chat_id']
         # remove the command, '/sub', from the string and get the course id give by user
         course_id = msg[4:].strip()
         # print(course_id)
         if course_id == '':
-            await update.message.reply_text('Please enter a valid <course id> with /sub command to subscribe.\n -> /sub <course_id>')
+            await update.message.reply_text('Please enter a <course id> with /sub command to subscribe.\n -> /sub <course_id>')
         else:
             try:
                 # convert the message/course id to int
@@ -62,13 +54,14 @@ class SubscribeManager:
                 return await update.message.reply_text("Please enter a valid integer value :/ \n type -> /courses to get the list of available courses with there ids ")
             
     async def unsubscribe(self,update,context):
+        '''Unsubscribe the user from the particular course id and update subscribers.csv'''
         msg = update.message['text']
         chat_id = update.message['chat_id']
         # remove the command, '/unsub', from the string and get the course id give by user
         course_id = msg[6:].strip()
         # print(course_id)
         if course_id == '':
-            await update.message.reply_text('Please enter a valid <course id> with /unsub command to subscribe.\n -> /unsub <course_id>')
+            await update.message.reply_text('Please enter a <course id> with /unsub command to subscribe.\n -> /unsub <course_id>')
         else:
             try:
                 # convert the message/course id to int
