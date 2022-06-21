@@ -6,7 +6,7 @@ import pandas as pd
 class SubscribeManager:
     
     def __init__(self,Canvas_URL, CANVAS_TOKEN):
-        self.announcements_df= pd.read_csv('csv/subscribers.csv',dtype='int64',error_bad_lines=False)
+        self.announcements_df= pd.read_csv('csv/subscribers.csv',dtype='int64',on_bad_lines='skip')
         self.canvas = Canvas(Canvas_URL, CANVAS_TOKEN) 
         
     def sub_message_format(self,title,description,course_id):

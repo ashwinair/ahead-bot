@@ -1,7 +1,6 @@
 # from calendar import calendar
 from datetime import datetime
 from canvasapi import Canvas
-from click import pass_context
 from tele.announcements import Announcement
 from tele.assignments import Assignments
 from tele.constants import IST
