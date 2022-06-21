@@ -44,7 +44,7 @@ def main():
     application = Application.builder().token(API_KEY).build()
     job_queue = application.job_queue
     job_queue.run_repeating(callback=canvas_client.get_annoucements,
-                            interval=60)
+                            interval=300)
 
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help))
