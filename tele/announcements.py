@@ -2,7 +2,6 @@ from datetime import datetime
 from canvasapi import Canvas
 from html2text import html2text
 import pandas as pd
-from telegram.constants import ParseMode
 import pytz
 from tele.constants import (
     CANVAS_DATE_FORMAT,
@@ -14,7 +13,7 @@ class Announcement:
     
     def __init__(self,API_URL, CANVAS_TOKEN):
         self.canvas = Canvas(API_URL, CANVAS_TOKEN)
-        self.announcements_df= pd.read_csv('csv/subscribers.csv',dtype='int64',error_bad_lines=False)
+        self.announcements_df= pd.read_csv('csv/subscribers.csv',dtype='int64',on_bad_lines='skip')
 
     def format_announcement(self,announcement,course):
         post_datetime = pytz.utc.localize(

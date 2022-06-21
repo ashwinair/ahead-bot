@@ -3,7 +3,8 @@ from telegram.ext import (
     Application,
     CommandHandler,
 )
-from tele.pattern_matching import Pattern_Matching
+import logging
+# from tele.pattern_matching import Pattern_Matching
 import canvas_handler
 from telegram import ForceReply, Update
 from tele.constants import(
@@ -12,9 +13,19 @@ from tele.constants import(
     API_KEY
 )
 from tele.subscribe_manager import SubscribeManager
+import asyncio
 
 canvas_client = canvas_handler.CanvasTele(CANVAS_URL, CANVAS_TOKEN)
 sub = SubscribeManager(CANVAS_URL, CANVAS_TOKEN)
+
+# Enable logging
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    level=logging.INFO,
+                    filename='TeleBot.log',
+                    filemode='a')
+
+logger = logging.getLogger(__name__)
+logging.getLogger().addHandler(logging.StreamHandler())
 
 async def start(update, context) -> None:
     """Send a message when the command /start is issued."""
@@ -39,7 +50,10 @@ async def help(update, context) -> None:
     """
     await update.message.reply_text(text_to_send)
 
-
+def error(update, error):
+    """Log Errors caused by Updates."""
+    logger.warning('Update {} caused error {}'.format(update, error))
+  
 def main():
     application = Application.builder().token(API_KEY).build()
     job_queue = application.job_queue
@@ -50,11 +64,14 @@ def main():
     application.add_handler(CommandHandler("help", help))
     application.add_handler(CommandHandler("courses", canvas_client.get_courses_list))
     application.add_handler(CommandHandler("due", canvas_client.get_assingment))
-    application.add_handler(CommandHandler("ask", Pattern_Matching.matching))
+    # application.add_handler(CommandHandler("ask", Pattern_Matching.matching))
     application.add_handler(CommandHandler("sub", sub.subscribe_announcement))
     application.add_handler(CommandHandler("unsub", sub.unsubscribe))
+   # log all errors
+    application.add_error_handler(error)
+  
     application.run_polling()
-
+    logger.info('Bot started.')
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
