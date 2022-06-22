@@ -1,0 +1,4 @@
+tele/__pycache__/
+keys/
+Procfile/
+*.log
