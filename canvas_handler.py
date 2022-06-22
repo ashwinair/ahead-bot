@@ -1,7 +1,7 @@
 # from calendar import calendar
 from datetime import datetime
 from canvasapi import Canvas
-from tele.announcements import Announcement
+from tele.announcements import Announcements
 from tele.assignments import Assignments
 from tele.constants import IST
 from tele.constants import(
@@ -10,7 +10,7 @@ from tele.constants import(
 )
 
 course_ids = []
-announcements_client = Announcement(CANVAS_URL, CANVAS_TOKEN)
+announcements_client = Announcements(CANVAS_URL, CANVAS_TOKEN)
 
 
 class CanvasTele:
@@ -53,6 +53,8 @@ class CanvasTele:
         course_id = msg[4:].strip()
         # print(course_id)
         if course_id == '':
+                await update.message.reply_text("Please enter a valid course id,\n or if you want due assignments of all course id then,\n type /due all")
+        elif course_id == 'all':
             await self.get_all_assignments(update, context)
         else:
             try:

@@ -9,11 +9,11 @@ from tele.constants import (
     OUTPUT_DATE_FORMAT
 )
 
-class Announcement:
+class Announcements:
     
     def __init__(self,API_URL, CANVAS_TOKEN):
         self.canvas = Canvas(API_URL, CANVAS_TOKEN)
-        self.announcements_df= pd.read_csv('csv/subscribers.csv',dtype='int64',on_bad_lines='skip')
+        self.announcements_df= pd.read_csv('csv/subscribers.csv',dtype='int64',error_bad_lines=False)
 
     def format_announcement(self,announcement,course):
         post_datetime = pytz.utc.localize(

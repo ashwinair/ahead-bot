@@ -5,7 +5,7 @@ IST = pytz.timezone('Asia/Kolkata')
 CANVAS_DATE_FORMAT = r'%Y-%m-%dT%H:%M:%SZ'
 OUTPUT_DATE_FORMAT = r'%a, %b %d at %I:%M %p'
 
-class Assignments :
+class Assignments:
     
     def __init__(self,API_URL, CANVAS_TOKEN):
         self.canvas = Canvas(API_URL, CANVAS_TOKEN)  
