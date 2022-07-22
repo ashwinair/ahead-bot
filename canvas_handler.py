@@ -9,7 +9,7 @@ from tele.constants import(
     CANVAS_TOKEN,
 )
 
-course_ids = []
+active_course_ids = [115,112,114,158,173,201,202,204,206] #2nd sem subjects id
 announcements_client = Announcements(CANVAS_URL, CANVAS_TOKEN)
 
 
@@ -19,14 +19,14 @@ class CanvasTele:
         self.canvas = Canvas(API_URL, CANVAS_TOKEN)
         self.assignment = Assignments(API_URL, CANVAS_TOKEN)
         self.last_check_time = datetime.now()
-        print(self.courses_list())
+        # print(self.courses_list())
 
     # fill the course_ids[] with currently enrolled active courses in canvas LMS
-    def courses_list(self):
-        courses = self.canvas.get_courses(enrollment_state="active")
-        for course in courses:
-            course_ids.append(course.id)
-        return course_ids
+    # def courses_list(self):
+    #     courses = self.canvas.get_courses(enrollment_state="active")
+    #     for course in courses:
+    #         active_course_ids.append(course.id)
+    #     return active_course_ids
     
     def course_formatter(self):
         list_of_courses =[]
@@ -37,7 +37,8 @@ class CanvasTele:
                                     .format(title,description))
         courses = self.canvas.get_courses(enrollment_state="active")
         for course in courses:
-            list_of_courses.append(f'{course.name} ({course.id})')
+            if course.id in active_course_ids:
+                list_of_courses.append(f'{course.name} ({course.id})')
         return list_of_courses
     
     async def get_courses_list(self,update,context):
@@ -61,19 +62,19 @@ class CanvasTele:
                 # convert the message/course id to int
                 course_id = int(course_id)
                 # and check if it is a valid course id which is present in int list
-                if course_ids.count(course_id) != 0:
+                if active_course_ids.count(course_id) != 0:
                     await self.assignment.send_reminder(update, course_id, current_datetime)
                 else:
                     await update.message.reply_text("Please enter a valid course id :)")
             except:  # message is not type int...
                 return await update.message.reply_text("Please enter a valid integer value :)")
 
+     
      # send all the due assingments for every subject
-
     async def get_all_assignments(self, update, context):
         current_datetime = datetime.now().astimezone(IST)
         # time = current_datetime.strftime("%H:%M")
-        for course in course_ids:
+        for course in active_course_ids:
             await self.assignment.send_reminder(update, course, current_datetime)
 
     async def get_annoucements(self, update):
@@ -82,18 +83,10 @@ class CanvasTele:
         print(f'last check time: {self.last_check_time}')
         # time = current_datetime.strftime("%H:%M")
         announcements = announcements_client.canvas.get_announcements(
-            context_codes=course_ids, start_date=self.last_check_time, end_date=current_datetime)
+            context_codes=active_course_ids, start_date=self.last_check_time, end_date=current_datetime)
         for announcement in announcements:
             print(f'Sending {announcement}')
             await announcements_client.send_announcements(update, announcement)
         # update last check time to current date and time
         self.last_check_time = current_datetime
 
-    # async def calender_events(self,update,context):
-    #     calender_event = self.canvas.get_calendar_events()
-    #     events = []
-    #     print(calender_event[0])
-    #     for c in range(0,len(list(calender_event))):
-    #             events.append(calender_event[c].__str__())
-    #     text_to_send = '\n '.join(events)
-    #     await update.message.reply_text(text_to_send)
