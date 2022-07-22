@@ -13,7 +13,6 @@ from tele.constants import(
     API_KEY
 )
 from tele.subscribe_manager import SubscribeManager
-import asyncio
 
 canvas_client = canvas_handler.CanvasTele(CANVAS_URL, CANVAS_TOKEN)
 sub = SubscribeManager(CANVAS_URL, CANVAS_TOKEN)
